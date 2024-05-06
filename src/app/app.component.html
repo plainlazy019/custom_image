@@ -1,6 +1,6 @@
 <div class="flex flex-row">
     <div class="basis-4/5">
-        <div  class="container h-dvh flex flex-row items-center justify-center p-10">
+        <div #leftColumn class="container h-dvh flex flex-row items-center justify-center">
             
             <!-- <div id="image_generation" class="h-4/5 w-4/5 container bg-amber-500">
                 <div cdkDrag class="absolute hover:cursor-move hover:border hover:border-blue-500" [style.color]="font_color" [style.font-size.px]="font_size">{{ name }}</div>
@@ -9,7 +9,7 @@
 
             
                 
-            <canvas #some_canvas>
+            <canvas #some_canvas style="border-style: solid; border-width: 10px; border-color: blue;">
 
             </canvas>
             
@@ -34,7 +34,7 @@
                 <input type="color" [(ngModel)]="font_color"/>
                 <input id="id-font-size" type="number" class="border" (keyup.enter)="changeFontSize()" />
                 <input type="file" #fileInput (change)="handleImage($event)">
-                <button (click)="uploadImage()">Try!</button>
+                <button (click)="resizeCanvas()">Click here!</button>
             </div>
         </div>
     </div>

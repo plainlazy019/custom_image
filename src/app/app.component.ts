@@ -1,4 +1,4 @@
-import { Component, ElementRef, NgModule, ViewChild } from '@angular/core';
+import { Component, ElementRef, NgModule, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { FormsModule, NgModel } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
 
@@ -21,14 +21,12 @@ import { ColorPickerModule } from 'ngx-color-picker';
 
 
 
-export class AppComponent {
 
-  
 
-  font_color = ''
-  font_size = 50
-  name = 'Name Here'
-  
+export class AppComponent{
+
+  constructor(private renderer: Renderer2){}
+
   @ViewChild('image_file')
   image_file!: ElementRef
 
@@ -37,6 +35,27 @@ export class AppComponent {
 
   @ViewChild('imageFileInput')
   uploadedImage!: ElementRef
+
+  @ViewChild('leftColumn')
+  leftColumn!: ElementRef
+
+  screenHeight: number | undefined
+  
+
+  resizeCanvas(){
+
+    console.log(this.renderer.parentNode : innerHeight)
+
+    
+  }
+
+  
+
+  font_color = ''
+  font_size = 50
+  name = 'Name Here'
+  
+  
   
 
   imageGen(){
@@ -68,28 +87,7 @@ export class AppComponent {
     
   }
 
-  uploadImage(){
-
-    const image = new Image()
-    const ctx = this.some_canvas.nativeElement.getContext("2d");
-    image.src = URL.createObjectURL(this.uploadedImage.nativeElement.files[0])
-    
-    image.addEventListener("load", (e) => {
-      const imageAspectRatio = image.width/image.height
-      if(imageAspectRatio >=1 ){
-        ctx.drawImage(image, 0, 0, this.some_canvas.nativeElement.width, this.some_canvas.nativeElement.width/imageAspectRatio)
-      }else{
-        ctx.drawImage(image, 0, 0, this.some_canvas.nativeElement.height*imageAspectRatio, this.some_canvas.nativeElement.height)
-      }
-      
-      console.log(image.width, image.height, imageAspectRatio)
-    });
-
-    
-
-    
-
-  }
+  
 
   public handleImage(event: any): void {
     const file = event.target.files[0];
@@ -100,32 +98,39 @@ export class AppComponent {
       img.src = e.target.result;
       img.onload = () => {
         const canvas = this.some_canvas.nativeElement;
+        const leftColumn = this.leftColumn.nativeElement
+        canvas.height = screen.height
+        canvas.width = leftColumn.offsetWidth
         const ctx = canvas.getContext('2d');
 
-        // Calculate scaling factor
+        
+
+        
         const scaleFactor = Math.min(canvas.width / img.width, canvas.height / img.height);
 
-        // Calculate new image dimensions
+        
         const scaledWidth = img.width * scaleFactor;
         const scaledHeight = img.height * scaleFactor;
 
-        // Clear canvas
+        console.log("Screen Height: ", screen.height, "Canvas Height: ", canvas.height, "Canvas Width: ", canvas.width, "Left Column Width: ", leftColumn.offsetWidth, "Image Height: ", img.height, "Scaled Height: ", scaledHeight)  
+        
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw scaled image onto canvas
+        
         ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
 
         ctx.font = '20px Arial';
         ctx.fillStyle = 'white';
         ctx.fillText('Hello, World!', 50, 100);
 
-        const imageUrl = canvas.toDataURL('image/png');
-        var link = document.createElement('a');
-        link.download = 'my-image-name.jpeg';
-        link.href = imageUrl;
-        link.click();
-        //console.log('Generated invite image:', inviteImageUrl);
-      };
+
+        
+        //const imageUrl = canvas.toDataURL('image/png');
+        //var link = document.createElement('a');
+        //link.download = 'my-image-name.jpeg';
+        //link.href = imageUrl;
+        //link.click();
+        };
     };
 
     reader.readAsDataURL(file);
